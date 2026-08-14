@@ -1,1 +1,8 @@
-node_modules\n.build\n.svelte-kit\n.env\n.env.*\n!.env.example\n.DS_Store\nThumbs.db
+node_modules
+build
+.svelte-kit
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
