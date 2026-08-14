@@ -7,7 +7,7 @@ import { DEFAULT_DOSE } from '$lib/data/constants';
 export const mode = writable('hot'); // 'hot' | 'iced'
 export const dose = writable(DEFAULT_DOSE); // number (grams)
 export const dripperId = writable('v60'); // string
-export const recipeId = writable('hoffmannV60'); // string
+export const recipeId = writable('universal'); // string
 export const grindIndex = writable(3); // number 0-6
 export const grindManual = writable(false); // boolean
 export const tempUnit = writable('C'); // 'C' | 'F'
@@ -37,13 +37,8 @@ export const currentBrew = derived(
 export function setDripper(id) {
   dripperId.set(id);
   grindManual.set(false);
-
-  // Auto-select native recipe if available
-  const recipes = getRecipesForDripper(id);
-  const nativeRecipe = recipes.find((r) => r.badge === 'native');
-  if (nativeRecipe) {
-    recipeId.set(nativeRecipe.recipe.id);
-  }
+  // Always reset to Universal 1:16 on dripper change
+  recipeId.set('universal');
 }
 
 export function setRecipe(id) {
