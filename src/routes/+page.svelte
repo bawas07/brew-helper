@@ -9,6 +9,7 @@
 	import RecipePanel from '$lib/components/RecipePanel.svelte';
 	import Timer from '$lib/components/Timer.svelte';
 	import PourSchedule from '$lib/components/PourSchedule.svelte';
+	import BrewModal from '$lib/components/BrewModal.svelte';
 	import BrewJournal from '$lib/components/BrewJournal.svelte';
 </script>
 
@@ -50,4 +51,6 @@
 			figures are approximate, trust your taste
 		</footer>
 	</div>
+
+	<BrewModal />
 </div>

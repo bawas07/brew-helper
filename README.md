@@ -19,7 +19,6 @@ A calm, precise pour-over coffee companion built with SvelteKit.
 - **Styling**: Tailwind CSS v4
 - **PWA**: vite-plugin-pwa
 - **Build adapter**: @sveltejs/adapter-static
-- **Deployment**: Cloudflare Workers (static assets served via Wrangler)
 
 ## Getting Started
 
@@ -35,12 +34,7 @@ npm run build
 
 # Preview the production build locally (served via wrangler dev)
 npm run preview
-
-# Deploy to Cloudflare Workers
-npm run deploy
 ```
-
-> `preview` and `deploy` require a Cloudflare account and Wrangler auth (`wrangler login`).
 
 ## Project Structure
 
@@ -66,18 +60,6 @@ src/
 ## Development
 
 The app uses Svelte 5 runes (`$state`, `$derived`, `$effect`) for reactivity. All brewing calculations are in `calculations.js` for easy testing.
-
-## Deployment
-
-The app builds a static site (`@sveltejs/adapter-static`) into `./build`, which is served as Cloudflare assets. Configuration lives in `wrangler.jsonc` (SPA fallback enabled).
-
-```bash
-# Authenticate once
-wrangler login
-
-# Build + deploy to Cloudflare Workers
-npm run deploy
-```
 
 ## License
 
