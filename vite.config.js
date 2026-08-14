@@ -9,13 +9,17 @@ export default defineConfig({
 		sveltekit(),
 		VitePWA({
 			registerType: 'autoUpdate',
+			includeAssets: ['icon.svg'],
 			manifest: {
 				name: 'Slow Pour — Home Brew Calculator',
 				short_name: 'Slow Pour',
 				description: 'A calm, precise pour-over companion',
+				start_url: '/',
+				scope: '/',
 				theme_color: '#F6F2E9',
 				background_color: '#F6F2E9',
 				display: 'standalone',
+				orientation: 'portrait-primary',
 				icons: [
 					{
 						src: '/icon-192.png',
@@ -26,6 +30,12 @@ export default defineConfig({
 						src: '/icon-512.png',
 						sizes: '512x512',
 						type: 'image/png'
+					},
+					{
+						src: '/icon-512.png',
+						sizes: '512x512',
+						type: 'image/png',
+						purpose: 'maskable'
 					}
 				]
 			},
