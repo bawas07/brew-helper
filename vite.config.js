@@ -1,13 +1,13 @@
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { vitePlugin as pwa } from 'vite-plugin-pwa';
+import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
-		pwa({
+		VitePWA({
 			registerType: 'autoUpdate',
 			manifest: {
 				name: 'Slow Pour — Home Brew Calculator',

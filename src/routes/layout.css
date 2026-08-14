@@ -1,1 +1,54 @@
 @import 'tailwindcss';
+
+/* Slow Pour Design System - Tailwind v4 Theme Customization */
+@theme {
+  /* Colors */
+  --color-cream: #F6F2E9;
+  --color-card: #FCFAF5;
+  --color-ink: #2B2621;
+  --color-ink-soft: #736A5E;
+  --color-ink-faint: #A69C8C;
+  --color-line: #E6DECE;
+  --color-rust: #B24A21;
+  --color-rust-ink: #7C3216;
+  --color-rust-soft: #F2DDC8;
+  --color-teal: #2E6577;
+  --color-teal-soft: #DCEAEC;
+  --color-gold: #8A6D2F;
+  --color-gold-soft: #EFE6CD;
+
+  /* Fonts */
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', Menlo, monospace;
+
+  /* Border Radii */
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(43,38,33,.04), 0 8px 24px -12px rgba(43,38,33,.12);
+}
+
+/* Base styles */
+body {
+  @apply bg-cream text-ink font-sans antialiased;
+  line-height: 1.5;
+}
+
+/* Range slider custom styling */
+input[type="range"] {
+  @apply w-full h-1 rounded-full bg-line outline-none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  @apply w-5 h-5 rounded-full bg-rust border-[3px] border-card shadow-md cursor-pointer;
+  margin-top: -8px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply w-5 h-5 rounded-full bg-rust border-[3px] border-card cursor-pointer;
+}

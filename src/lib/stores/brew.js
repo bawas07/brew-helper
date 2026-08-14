@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store';
-import { computeBrew, getRecipesForDripper, getDripperById } from '$lib/calculations';
+import { computeBrew, recipesForDripper, dripperById } from '$lib/calculations';
 import { RECIPES } from '$lib/data/recipes';
 import { DEFAULT_DOSE } from '$lib/data/constants';
 
@@ -15,9 +15,9 @@ export const tempUnit = writable('C'); // 'C' | 'F'
 // Derived stores
 export const currentRecipe = derived(recipeId, ($recipeId) => RECIPES[$recipeId]);
 
-export const currentDripper = derived(dripperId, ($dripperId) => getDripperById($dripperId));
+export const currentDripper = derived(dripperId, ($dripperId) => dripperById($dripperId));
 
-export const availableRecipes = derived(dripperId, ($dripperId) => getRecipesForDripper($dripperId));
+export const availableRecipes = derived(dripperId, ($dripperId) => recipesForDripper($dripperId));
 
 export const currentBrew = derived(
   [mode, dose, dripperId, recipeId, grindIndex, grindManual],
@@ -51,14 +51,26 @@ export function setRecipe(id) {
   grindManual.set(false);
 }
 
+/**
+ * Set the coffee dose in grams
+ * @param {number} value
+ */
 export function setDose(value) {
   dose.set(value);
 }
 
+/**
+ * Toggle between hot and iced brewing modes
+ * @param {'hot'|'iced'} newMode
+ */
 export function toggleMode(newMode) {
   mode.set(newMode);
 }
 
+/**
+ * Set the grind size index (0-6)
+ * @param {number} index
+ */
 export function setGrind(index) {
   grindIndex.set(index);
   grindManual.set(true);
