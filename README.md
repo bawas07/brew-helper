@@ -1,42 +1,60 @@
-# sv
+# Slow Pour — Home Brew Calculator
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A calm, precise pour-over coffee companion built with SvelteKit.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Dripper Selection**: Choose from 11 popular dripper types (V60, Chemex, Kalita Wave, etc.)
+- **Smart Calculations**: Automatic water/ice ratios for hot and Japanese iced brewing methods
+- **Guided Timer**: Step-by-step brewing with real-time progress tracking
+- **Curated Recipes**: Classic brew methods from world champion baristas
+- **Grind Guidance**: Contextual grind size recommendations per dripper
+- **Temperature Control**: Celsius/Fahrenheit toggle with "time off boil" guidance
+- **Brew Journal**: Save and track your brewing history (localStorage)
+- **PWA Support**: Install as a mobile app, works offline
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Tech Stack
 
-To recreate this project with the same configuration:
+- **Framework**: SvelteKit + Svelte 5
+- **Styling**: Tailwind CSS v4
+- **PWA**: vite-plugin-pwa
+- **Deployment**: Static site (Vercel-ready)
 
-```sh
-# recreate this project
-npx sv@0.17.0 create --template minimal --types jsdoc --add tailwindcss="plugins:none" sveltekit-adapter="adapter:static" --no-install .
-```
+## Getting Started
 
-## Developing
+```bash
+# Install dependencies
+npm install
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+# Start development server
 npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
+# Build for production
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Project Structure
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```
+src/
+├── lib/
+│   ├── components/     # 11 Svelte components
+│   ├── stores/         # State management (brew + timer)
+│   ├── data/           # Dripper & recipe data
+│   ├── calculations.js # Brewing math logic
+│   └── storage.js      # localStorage utilities
+└── routes/
+    ├── +page.svelte    # Main page
+    └── +layout.svelte  # Root layout with fonts
+```
+
+## Development
+
+The app uses Svelte 5 runes (`$state`, `$derived`, `$effect`) for reactivity. All brewing calculations are in `calculations.js` for easy testing.
+
+## License
+
+MIT
