@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slow Pour — Home Brew Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F6F2E9;
+    --card:#FCFAF5;
+    --ink:#2B2621;
+    --ink-soft:#736A5E;
+    --ink-faint:#A69C8C;
+    --line:#E6DECE;
+    --rust:#B24A21;
+    --rust-ink:#7C3216;
+    --rust-soft:#F2DDC8;
+    --teal:#2E6577;
+    --teal-soft:#DCEAEC;
+    --gold:#8A6D2F;
+    --gold-soft:#EFE6CD;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-sm:8px;
+    --shadow: 0 1px 2px rgba(43,38,33,.04), 0 8px 24px -12px rgba(43,38,33,.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 24px 80px;}
+
+  /* header */
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{width:30px;height:30px;flex-shrink:0;color:var(--rust);}
+  .brand-name{font-family:'Fraunces',serif;font-weight:600;font-size:19px;letter-spacing:.01em;}
+  .eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-left:2px;}
+  header{display:flex;flex-direction:column;gap:2px;margin-bottom:38px;}
+  header .top-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+
+  .hero{max-width:640px;margin-bottom:44px;}
+  .hero h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(30px,4vw,42px);
+    line-height:1.12;
+    margin:0 0 14px;
+    letter-spacing:-.01em;
+  }
+  .hero h1 em{font-style:italic;color:var(--rust);font-weight:500;}
+  .hero p{font-size:15.5px;color:var(--ink-soft);max-width:520px;margin:0;}
+
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start;}
+  @media(max-width:900px){.layout{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
+  }
+
+  /* ---- left panel ---- */
+  .panel{padding:22px;display:flex;flex-direction:column;gap:26px;}
+  .field-label{
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:600;margin-bottom:10px;display:flex;
+    justify-content:space-between;align-items:baseline;
+  }
+  .field-label span.unit{text-transform:none;letter-spacing:0;font-weight:400;}
+
+  .segmented{display:flex;background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:3px;gap:3px;}
+  .segmented button{
+    flex:1;border:none;background:transparent;padding:9px 10px;border-radius:999px;
+    font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s;
+  }
+  .segmented button.active{background:var(--rust);color:#fff;}
+  .segmented button[data-mode="iced"].active{background:var(--teal);}
+  .segmented button svg{width:14px;height:14px;}
+
+  .dose-row{display:flex;align-items:center;gap:10px;}
+  .dose-input{
+    flex:1;display:flex;align-items:baseline;gap:6px;border:1px solid var(--line);
+    border-radius:var(--radius-sm);padding:8px 12px;background:var(--cream);
+  }
+  .dose-input input{
+    border:none;background:transparent;font-family:'Fraunces',serif;font-size:24px;
+    font-weight:500;width:70px;color:var(--ink);outline:none;
+  }
+  .dose-input span{font-size:12.5px;color:var(--ink-faint);}
+  .chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{
+    border:1px solid var(--line);background:var(--cream);border-radius:999px;padding:6px 12px;
+    font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:.15s;
+  }
+  .chip:hover{border-color:var(--rust);color:var(--rust-ink);}
+  .chip.active{background:var(--rust);border-color:var(--rust);color:#fff;}
+
+  .dripper-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .dripper-card{
+    border:1.5px solid var(--line);border-radius:var(--radius-md);padding:10px 10px 9px;
+    cursor:pointer;background:var(--cream);transition:.15s;text-align:left;
+  }
+  .dripper-card:hover{border-color:var(--ink-faint);}
+  .dripper-card.selected{border-color:var(--rust);background:var(--rust-soft);}
+  .dripper-card svg{width:22px;height:18px;color:var(--ink-soft);margin-bottom:6px;}
+  .dripper-card.selected svg{color:var(--rust-ink);}
+  .dripper-card .dname{font-size:12.5px;font-weight:700;line-height:1.25;}
+  .dripper-card .dmeta{font-size:11px;color:var(--ink-faint);margin-top:2px;line-height:1.3;}
+
+  .grind-track-wrap{padding-top:2px;}
+  .grind-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-faint);margin-top:8px;}
+  input[type="range"]{
+    -webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--line);outline:none;margin:14px 0 0;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--rust);
+    border:3px solid var(--card);box-shadow:0 1px 3px rgba(0,0,0,.25);cursor:pointer;margin-top:-8px;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;background:var(--rust);border:3px solid var(--card);cursor:pointer;
+  }
+  .grind-readout{
+    display:flex;justify-content:space-between;align-items:baseline;background:var(--cream);
+    border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;margin-top:4px;
+  }
+  .grind-readout .glabel{font-family:'Fraunces',serif;font-size:15px;font-weight:500;}
+  .grind-readout .gref{font-size:11.5px;color:var(--ink-faint);}
+
+  select{
+    width:100%;border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;
+    font-family:'Fraunces',serif;font-size:14.5px;font-weight:500;background:var(--cream);color:var(--ink);
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23736A5E' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center;
+  }
+  .recipe-note{font-size:12.5px;color:var(--ink-soft);margin-top:8px;line-height:1.5;}
+  .recipe-attrib{font-size:11.5px;color:var(--ink-faint);margin-top:5px;font-style:italic;}
+
+  /* ---- right column ---- */
+  .right-col{display:flex;flex-direction:column;gap:18px;}
+
+  .recipe-head{padding:22px 22px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);}
+  .recipe-head .eyebrow{margin:0 0 2px;}
+  .recipe-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin:0 0 4px;}
+  .recipe-head .sub{font-size:12.5px;color:var(--ink-faint);}
+  .recipe-head .attrib{font-size:12px;color:var(--ink-soft);margin-top:5px;}
+  .fit-badge{
+    display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.03em;
+    padding:3px 9px;border-radius:999px;margin-top:7px;
+  }
+  .fit-badge.native{background:var(--gold-soft);color:var(--gold);}
+  .fit-badge.compatible{background:var(--teal-soft);color:var(--teal);}
+  .fit-badge.universal{background:var(--line);color:var(--ink-soft);}
+  .save-btn{
+    background:var(--ink);color:#fff;border:none;border-radius:999px;padding:9px 16px;
+    font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;
+    white-space:nowrap;
+  }
+  .save-btn svg{width:13px;height:13px;}
+  .save-btn:hover{background:var(--rust-ink);}
+
+  .stat-row{display:flex;gap:0;padding:18px 22px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:90px;padding-right:16px;}
+  .stat + .stat{border-left:1px solid var(--line);padding-left:16px;}
+  .stat .slabel{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:4px;}
+  .stat .sval{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;color:var(--ink);}
+  .stat .sval.iced{color:var(--teal);}
+  .stat .sunit{font-size:12px;color:var(--ink-faint);font-weight:400;}
+
+  .notes{padding:0 22px 22px;display:flex;flex-direction:column;gap:9px;}
+  .note-line{display:flex;gap:9px;font-size:13px;color:var(--ink-soft);line-height:1.5;}
+  .note-line svg{width:14px;height:14px;flex-shrink:0;margin-top:3px;color:var(--ink-faint);}
+  .note-line b{color:var(--ink);font-weight:600;}
+
+  /* timer card */
+  .timer-card{padding:22px;text-align:center;}
+  .timer-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px;}
+  .timer-ring-wrap{position:relative;width:190px;height:190px;margin:0 auto 16px;}
+  .timer-ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+  .ring-bg{fill:none;stroke:var(--line);stroke-width:6;}
+  .ring-fg{fill:none;stroke:var(--rust);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .3s linear, stroke .3s;}
+  .ring-fg.iced{stroke:var(--teal);}
+  .timer-digits{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:38px;font-weight:600;letter-spacing:.01em;
+  }
+  .now-status{font-size:13px;color:var(--ink-soft);margin-bottom:18px;min-height:18px;}
+  .now-status b{color:var(--ink);}
+  .now-status .dash{color:var(--ink-faint);margin:0 5px;}
+  .timer-controls{display:flex;gap:10px;justify-content:center;}
+  .btn{
+    border:none;border-radius:999px;padding:11px 22px;font-family:inherit;font-size:13.5px;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;gap:7px;
+  }
+  .btn svg{width:14px;height:14px;}
+  .btn-primary{background:var(--rust);color:#fff;}
+  .btn-primary.iced{background:var(--teal);}
+  .btn-primary:hover{filter:brightness(.92);}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink-faint);}
+
+  /* pour schedule */
+  .schedule-head{display:flex;justify-content:space-between;align-items:baseline;padding:20px 22px 4px;}
+  .schedule-head h3{font-family:'Fraunces',serif;font-weight:500;font-size:17px;margin:0;}
+  .schedule-head .count{font-size:11.5px;color:var(--ink-faint);}
+  .schedule-list{padding:6px 22px 20px;display:flex;flex-direction:column;}
+  .step-row{display:flex;gap:14px;padding:13px 0;position:relative;}
+  .step-row:not(:last-child){border-bottom:1px dashed var(--line);}
+  .step-dot-col{display:flex;flex-direction:column;align-items:center;width:14px;flex-shrink:0;padding-top:3px;}
+  .step-dot{width:9px;height:9px;border-radius:50%;background:var(--line);border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);flex-shrink:0;}
+  .step-row.active .step-dot{background:var(--rust);box-shadow:0 0 0 1px var(--rust);}
+  .step-row.active.iced .step-dot{background:var(--teal);box-shadow:0 0 0 1px var(--teal);}
+  .step-row.done .step-dot{background:var(--ink-faint);box-shadow:0 0 0 1px var(--ink-faint);}
+  .step-body{flex:1;}
+  .step-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .step-title{font-size:13.5px;font-weight:700;}
+  .step-time{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);white-space:nowrap;}
+  .step-amount{font-family:'IBM Plex Mono',monospace;font-size:14.5px;font-weight:600;color:var(--rust);margin-top:3px;}
+  .step-amount.iced{color:var(--teal);}
+  .step-amount .total{color:var(--ink-faint);font-weight:400;font-size:12.5px;}
+  .step-purpose{font-size:12.5px;color:var(--ink-soft);margin-top:3px;line-height:1.45;}
+  .step-row.active .step-title{color:var(--rust);}
+  .step-row.active.iced .step-title{color:var(--teal);}
+
+  /* journal */
+  .journal-card{padding:22px;}
+  .journal-card h3{font-family:'Fraunces',serif;font-weight:500;font-size:17px;margin:0 0 14px;}
+  .journal-empty{
+    border:1.5px dashed var(--line);border-radius:var(--radius-md);padding:28px 16px;text-align:center;
+  }
+  .journal-empty p{margin:0;font-size:13px;color:var(--ink-faint);}
+  .journal-empty p.big{font-family:'Fraunces',serif;font-size:14.5px;color:var(--ink-soft);margin-bottom:4px;}
+  .journal-list{display:flex;flex-direction:column;gap:8px;}
+  .journal-item{
+    display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);
+    border-radius:var(--radius-md);padding:10px 12px;background:var(--cream);
+  }
+  .journal-item .jinfo{font-size:12.5px;color:var(--ink-soft);}
+  .journal-item .jinfo b{color:var(--ink);font-family:'Fraunces',serif;font-weight:500;font-size:13.5px;}
+  .journal-item .jinfo .jmeta{color:var(--ink-faint);margin-top:2px;}
+  .journal-item-actions{display:flex;gap:6px;}
+  .jbtn{
+    border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 11px;
+    font-size:11.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;
+  }
+  .jbtn:hover{border-color:var(--rust);color:var(--rust-ink);}
+  .jbtn.del{color:var(--ink-faint);}
+
+  footer{text-align:center;margin-top:50px;font-size:11.5px;color:var(--ink-faint);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="top-row">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M6 3h12l-1.2 6.5a5 5 0 0 1-4.9 4.1h-.8a5 5 0 0 1-4.9-4.1L5 3z"/>
+          <path d="M12 13.6V19"/>
+          <path d="M8 21h8"/>
+        </svg>
+        <span class="brand-name">Slow Pour</span>
+      </div>
+      <span class="eyebrow">Home Brew Calculator</span>
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1>A calm, precise <em>pour-over</em> companion for your morning ritual.</h1>
+    <p>Pick your dripper, dial in your beans, and get the exact water, temperature and pour schedule — including named recipes from World and national brewing champions, and the Japanese iced method for cold brews.</p>
+  </div>
+
+  <div class="layout">
+    <!-- LEFT: inputs -->
+    <div class="card panel">
+
+      <div>
+        <div class="field-label">Serve</div>
+        <div class="segmented" id="serveToggle">
+          <button data-mode="hot" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Hot
+          </button>
+          <button data-mode="iced">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.5 4.5l15 15M19.5 4.5l-15 15"/></svg>
+            Iced (Japanese)
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Coffee beans <span class="unit">grams</span></div>
+        <div class="dose-row">
+          <div class="dose-input">
+            <input type="number" id="doseInput" value="15" min="5" max="60" step="1">
+            <span>g</span>
+          </div>
+        </div>
+        <div class="chip-row" id="doseChips" style="margin-top:8px;">
+          <button class="chip" data-dose="12">12g</button>
+          <button class="chip active" data-dose="15">15g</button>
+          <button class="chip" data-dose="18">18g</button>
+          <button class="chip" data-dose="20">20g</button>
+          <button class="chip" data-dose="30">30g</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Dripper</div>
+        <div class="dripper-grid" id="dripperGrid"></div>
+      </div>
+
+      <div>
+        <div class="field-label">Grind size <span class="unit" id="grindContextLabel"></span></div>
+        <div class="grind-track-wrap">
+          <input type="range" id="grindSlider" min="0" max="6" step="1" value="3">
+          <div class="grind-labels"><span>Fine</span><span>Coarse</span></div>
+        </div>
+        <div class="grind-readout">
+          <span class="glabel" id="grindLabel">Medium</span>
+          <span class="gref" id="grindRef">Standard Pour-Over</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Recipe</div>
+        <select id="recipeSelect"></select>
+        <div class="recipe-note" id="recipeNote"></div>
+        <div class="recipe-attrib" id="recipeAttrib"></div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: output -->
+    <div class="right-col">
+
+      <div class="card">
+        <div class="recipe-head">
+          <div>
+            <div class="eyebrow">Your recipe</div>
+            <h2 id="recipeTitle">—</h2>
+            <div class="sub" id="recipeSub">—</div>
+            <span class="fit-badge" id="fitBadge"></span>
+          </div>
+          <button class="save-btn" id="saveBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save brew
+          </button>
+        </div>
+
+        <div class="stat-row" id="statRow"></div>
+        <div class="notes" id="notesBox"></div>
+      </div>
+
+      <div class="card timer-card">
+        <div class="timer-label">Brew timer · target <span id="targetTimeLabel">2:45</span></div>
+        <div class="timer-ring-wrap">
+          <svg viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="44"/>
+            <circle class="ring-fg" id="ringFg" cx="50" cy="50" r="44"/>
+          </svg>
+          <div class="timer-digits" id="timerDigits">00:00</div>
+        </div>
+        <div class="now-status" id="nowStatus">Press start when your water's ready.</div>
+        <div class="timer-controls">
+          <button class="btn btn-primary" id="startBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start brew
+          </button>
+          <button class="btn btn-ghost" id="resetBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="schedule-head">
+          <h3>Pour schedule</h3>
+          <span class="count" id="stepCount">4 steps</span>
+        </div>
+        <div class="schedule-list" id="scheduleList"></div>
+      </div>
+
+      <div class="card journal-card">
+        <h3>Brew journal</h3>
+        <div id="journalBox"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>Slow Pour · brewed at home · recipes adapted from public brew guides — water &amp; ice figures are approximate, trust your taste</footer>
+</div>
+
+<script>
+/* ============================ DATA ============================ */
+
+const GRIND_STEPS = [
+  {label:'Extra Fine', ref:'Espresso'},
+  {label:'Fine', ref:'Moka Pot'},
+  {label:'Medium-Fine', ref:'Fast Pour-Over'},
+  {label:'Medium', ref:'Standard Pour-Over'},
+  {label:'Medium-Coarse', ref:'Slow Pour-Over'},
+  {label:'Coarse', ref:'French Press'},
+  {label:'Extra Coarse', ref:'Cold Brew'},
+];
+
+const DRIPPER_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h14l-2.4 12.2a4 4 0 0 1-3.9 3.3h-1.4a4 4 0 0 1-3.9-3.3L5 4z"/><path d="M4 4h16"/></svg>`;
+
+const DRIPPERS = [
+  {id:'v60',     name:'Hario V60',          shape:'Cone',                    flow:'Fast',       grind:2},
+  {id:'kalita',  name:'Kalita Wave',        shape:'Flat bottom',             flow:'Medium',     grind:3},
+  {id:'origami', name:'Origami',            shape:'Cone',                    flow:'Fast',       grind:2},
+  {id:'switch',  name:'Hario Switch',       shape:'Cone · immersion switch', flow:'Adjustable', grind:3},
+  {id:'cafec27', name:'CAFEC Deep 27',      shape:'Cone · bonded filter',    flow:'Slow',       grind:4},
+  {id:'flower',  name:'CAFEC Flower',       shape:'Cone · 60° flower ribs',  flow:'Medium-Fast', grind:2},
+  {id:'kono',    name:'Kono Meimon',        shape:'Cone · snug filter fit',  flow:'Medium-Slow', grind:3},
+  {id:'chemex',  name:'Chemex',             shape:'Cone · bonded filter',    flow:'Slow',       grind:4},
+];
+
+// pct = cumulative fraction of BASE water (hot water when iced, total water when hot)
+// native: the dripper this recipe was designed for. compatible: other drippers it also suits well.
+const RECIPES = {
+
+  universal: {
+    id:'universal', name:'Universal 1:16', native:'all', compatible:[], ratio:16, iceFraction:0.4,
+    attribution:'A safe, dripper-agnostic default',
+    rationale:"Works anywhere. Good starting point before trying a named recipe.",
+    tempHot:96, tempIced:96, grindOverride:null,
+    steps:[
+      {label:'Bloom',   dur:35, pct:0.10, purpose:'Saturate the grounds evenly. Give it 30–45s to bloom.'},
+      {label:'Pour 2',  dur:40, pct:0.40, purpose:'Build the base of the brew.'},
+      {label:'Pour 3',  dur:40, pct:0.70, purpose:'Develop body and sweetness.'},
+      {label:'Pour 4',  dur:50, pct:1.00, purpose:'Finish the draw-down. Pour steadily to the rim.'},
+    ],
+  },
+
+  hoffmannV60: {
+    id:'hoffmannV60', name:"Hoffmann's Ultimate V60", native:'v60', compatible:['origami','flower','kono'],
+    ratio:500/30, iceFraction:0.4,
+    attribution:'James Hoffmann — 2007 World Barista Champion',
+    rationale:'One main pour after the bloom, finished with a two-way stir and a Rao spin to flatten the bed.',
+    tempHot:95, tempIced:95, grindOverride:2,
+    steps:[
+      {label:'Bloom',                dur:45, pct:60/500,  purpose:'Pour 60g, stir to saturate every ground. Let it bloom 45s.'},
+      {label:'Pour 2',                dur:30, pct:300/500, purpose:'Pour in a circular motion to 300g, finishing by 1:15.'},
+      {label:'Pour 3',                dur:30, pct:1.00,    purpose:'Gently pour to 500g total by 1:45.'},
+      {label:'Stir, swirl & drawdown', dur:105, pct:1.00,   purpose:'Stir once clockwise, once counter-clockwise, then swirl to flatten the bed. Draw down to about 3:30 total.'},
+    ],
+  },
+
+  mccarthyKalita: {
+    id:'mccarthyKalita', name:"McCarthy's Kalita Wave", native:'kalita', compatible:[],
+    ratio:380/24, iceFraction:0.4,
+    attribution:'James McCarthy — coffee educator',
+    rationale:'A simple two-pulse structure that suits the forgiving, flat-bottomed Wave.',
+    tempHot:96, tempIced:96, grindOverride:5,
+    steps:[
+      {label:'Bloom',    dur:15, pct:48/380,  purpose:'Pour 48g, saturate the bed. Bloom for 15s.'},
+      {label:'Pulse 1',  dur:30, pct:190/380, purpose:'Pulse-pour up to 190g, keeping an even column of water above the grounds.'},
+      {label:'Pulse 2',  dur:30, pct:1.00,    purpose:'Pulse-pour the rest to 380g. Slow and steady if you can.'},
+      {label:'Drawdown', dur:135, pct:1.00,   purpose:'Let it draw down completely, about 3:30 total.'},
+    ],
+  },
+
+  duOrigami: {
+    id:'duOrigami', name:"Jia Ning Du's Origami", native:'origami', compatible:['v60','flower'],
+    ratio:250/15.5, iceFraction:0.4,
+    attribution:'Jia Ning Du — 2019 World Brewers Cup Champion',
+    rationale:'Five even pulse-pours, 30 seconds apart. The recipe that put the Origami on the map.',
+    tempHot:92, tempIced:92, grindOverride:3,
+    steps:[
+      {label:'Pour 1 — Bloom', dur:30, pct:0.20, purpose:'Pour 50g to saturate the grounds — this also acts as the bloom.'},
+      {label:'Pour 2',          dur:30, pct:0.40, purpose:'Pulse-pour to 100g at the 0:30 mark.'},
+      {label:'Pour 3',          dur:30, pct:0.60, purpose:'Pulse-pour to 150g at 1:00.'},
+      {label:'Pour 4',          dur:30, pct:0.80, purpose:'Pulse-pour to 200g at 1:30.'},
+      {label:'Pour 5',          dur:40, pct:1.00, purpose:'Final pulse to 250g at 2:00. Draw down to about 2:40 total.'},
+    ],
+  },
+
+  kasuyaSwitch: {
+    id:'kasuyaSwitch', name:"Kasuya's Hybrid Switch", native:'switch', compatible:[],
+    ratio:16, iceFraction:0.4,
+    attribution:'Tetsu Kasuya — 2016 World Brewers Cup Champion',
+    rationale:'Half percolation, half immersion — open the valve, pour half; close it, pour the rest.',
+    tempHot:92, tempIced:92, grindOverride:3,
+    steps:[
+      {label:'Pour 1 — valve open',   dur:45, pct:0.50, purpose:'Valve open. Pour to 50% of total water, percolation style.'},
+      {label:'Pour 2 — valve closed', dur:75, pct:1.00, purpose:'Close the valve. Pour the rest to 100% and let it steep as immersion.'},
+      {label:'Open valve & drain',    dur:45, pct:1.00, purpose:'Open the valve and let the coffee drain completely.'},
+    ],
+  },
+
+  wibawaSwitch: {
+    id:'wibawaSwitch', name:"Wibawa's Double Immersion", native:'switch', compatible:[],
+    ratio:220/15, iceFraction:0.4,
+    attribution:'Ryan Wibawa — Indonesian Brewers Cup Champion (2016, 2024), 3rd place 2024 World Brewers Cup',
+    rationale:'Two immersion stages at two temperatures — 86°C then 92°C — for a layered, sweet cup.',
+    tempHot:89, tempIced:89, grindOverride:3,
+    steps:[
+      {label:'Bloom — valve closed, 86°C',       dur:45, pct:100/220, purpose:'Pour 100g at 86°C, valve closed. Bloom 40s, then open the valve briefly to drain (~5s).'},
+      {label:'Second pour — valve closed, 92°C', dur:65, pct:1.00,    purpose:'Close the valve again and pour the rest at 92°C.'},
+      {label:'Open valve & drain',                dur:60, pct:1.00,    purpose:'At 1:05 on this pour, open the valve and let it drain fully. Give it a gentle swirl before serving.'},
+    ],
+  },
+
+  cafecOsmotic: {
+    id:'cafecOsmotic', name:"CAFEC's Osmotic Method", native:'cafec27', compatible:['flower'],
+    ratio:16, iceFraction:0.35,
+    attribution:"CAFEC's own brewing guide",
+    rationale:'One steady center pour after the bloom — no spiral needed. Built for the deep, narrow bed.',
+    tempHot:92, tempIced:92, grindOverride:3,
+    steps:[
+      {label:'Bloom',        dur:30,  pct:0.125, purpose:'Pour 30g in a small circle to fully saturate the bed.'},
+      {label:'Osmotic pour', dur:150, pct:1.00,  purpose:"Pour the rest slowly, straight into the center — don't chase the walls. Let it filter through on its own."},
+    ],
+  },
+
+  hoffmannChemex: {
+    id:'hoffmannChemex', name:"Hoffmann's Chemex", native:'chemex', compatible:['cafec27'],
+    ratio:500/30, iceFraction:0.35,
+    attribution:'James Hoffmann — 2007 World Barista Champion',
+    rationale:'His V60 method adapted for the thick Chemex filter — same shape, longer drawdown.',
+    tempHot:95, tempIced:95, grindOverride:4,
+    steps:[
+      {label:'Bloom',              dur:45,  pct:75/500,  purpose:'Pour 60–90g to saturate. Let it bloom 45s.'},
+      {label:'Pour 2',              dur:30,  pct:300/500, purpose:'Pour in a circular motion, breaking up any clumps, to 300g.'},
+      {label:'Pour 3',              dur:30,  pct:1.00,    purpose:'Continue pouring to 500g total.'},
+      {label:'Stir, shake & settle', dur:145, pct:1.00,    purpose:'Stir clockwise then counter-clockwise, give it a little shake, and let it draw down to about 4:10 total.'},
+    ],
+  },
+
+  flowerBelco: {
+    id:'flowerBelco', name:"Flower Dripper — Competition Style", native:'flower', compatible:['origami','v60'],
+    ratio:16, iceFraction:0.4,
+    attribution:'Inspired by Daiki Hatakeyama — 2019 Japan Brewers Cup Champion, 2021 World Brewers Cup runner-up',
+    rationale:"Hatakeyama's own routine used two temperatures made for one specific coffee — this version keeps his pour structure but uses one steady temperature so it's repeatable at home.",
+    tempHot:92, tempIced:92, grindOverride:2,
+    steps:[
+      {label:'Bloom',       dur:30, pct:0.25,  purpose:'Pour 60g, fully saturating the grounds.'},
+      {label:'Main pour',   dur:40, pct:0.625, purpose:'Pour in a circular motion, without touching the filter, to 150g.'},
+      {label:'Final pour',  dur:40, pct:1.00,  purpose:'Finish pouring to the total.'},
+      {label:'Drawdown',    dur:70, pct:1.00,  purpose:'Let it draw down completely, about 3:00 total. Stir the server before serving.'},
+    ],
+  },
+
+  kurasuKono: {
+    id:'kurasuKono', name:"Kurasu's Six-Pour Kono", native:'kono', compatible:['v60'],
+    ratio:240/16, iceFraction:0.4,
+    attribution:'Kurasu Kyoto',
+    rationale:"Six small, even pours keep the Kono's slow-draining snug filter from stalling out.",
+    tempHot:92, tempIced:92, grindOverride:3,
+    steps:[
+      {label:'Pour 1 — bloom', dur:35,  pct:1/6, purpose:'Pour 40g, stir gently with a thin stick to fully saturate. Rest 35s.'},
+      {label:'Pour 2',          dur:15,  pct:2/6, purpose:'Pour another 40g. Rest ~10–15s.'},
+      {label:'Pour 3',          dur:15,  pct:3/6, purpose:'Pour another 40g. Rest ~10–15s.'},
+      {label:'Pour 4',          dur:15,  pct:4/6, purpose:'Pour another 40g. Rest ~10–15s.'},
+      {label:'Pour 5',          dur:15,  pct:5/6, purpose:'Pour another 40g. Rest ~10–15s.'},
+      {label:'Pour 6',          dur:105, pct:1.00, purpose:'Final 40g pour. Let it draw down fully, about 3:15–3:30 total.'},
+    ],
+  },
+};
+
+// approx cooling curve for the no-thermometer hack: {temp C, seconds off boil}
+const COOL_TABLE = [
+  {t:100, s:0}, {t:96, s:15}, {t:95, s:30}, {t:93, s:40},
+  {t:90, s:60}, {t:88, s:75}, {t:85, s:120}, {t:82, s:150}, {t:80, s:180},
+];
+
+/* ============================ STATE ============================ */
+
+const state = {
+  mode: 'hot',          // 'hot' | 'iced'
+  dose: 15,
+  dripperId: 'v60',
+  recipeId: 'hoffmannV60',
+  grindIndex: 2,
+  grindManual: false,
+  tempUnit: 'C',
+  timer: { running:false, elapsed:0, intervalId:null },
+};
+
+/* ============================ HELPERS ============================ */
+
+function dripperById(id){ return DRIPPERS.find(d=>d.id===id); }
+
+// Returns [{recipe, badge}] for a dripper: native ("Recommended"), compatible ("Also works well"), universal last.
+function recipesForDripper(id){
+  const list = Object.values(RECIPES).filter(r => r.id !== 'universal');
+  const native = list.filter(r => r.native === id);
+  const compatible = list.filter(r => r.native !== id && (r.compatible||[]).includes(id));
+  return [
+    ...native.map(r=>({recipe:r, badge:'native', badgeText:'Recommended'})),
+    ...compatible.map(r=>({recipe:r, badge:'compatible', badgeText:'Also works well'})),
+    {recipe:RECIPES.universal, badge:'universal', badgeText:'Universal'},
+  ];
+}
+
+function fmtTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function hackSecondsFor(targetC){
+  const table = COOL_TABLE;
+  if (targetC >= table[0].t) return 0;
+  for (let i=0;i<table.length-1;i++){
+    const a = table[i], b = table[i+1];
+    if (targetC <= a.t && targetC >= b.t){
+      const ratio = (a.t - targetC) / (a.t - b.t);
+      return a.s + ratio * (b.s - a.s);
+    }
+  }
+  const a = table[table.length-2], b = table[table.length-1];
+  const slope = (b.s - a.s) / (a.t - b.t);
+  return b.s + slope * (b.t - targetC);
+}
+function cToF(c){ return Math.round(c * 9/5 + 32); }
+
+/* ============================ RENDER: static grids ============================ */
+
+function renderDripperGrid(){
+  const grid = document.getElementById('dripperGrid');
+  grid.innerHTML = DRIPPERS.map(d => `
+    <button class="dripper-card ${d.id===state.dripperId?'selected':''}" data-id="${d.id}" type="button">
+      ${DRIPPER_ICON}
+      <div class="dname">${d.name}</div>
+      <div class="dmeta">${d.shape} · ${d.flow}</div>
+    </button>
+  `).join('');
+  grid.querySelectorAll('.dripper-card').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.dripperId = btn.dataset.id;
+      const options = recipesForDripper(state.dripperId);
+      const preferred = options.find(o=>o.badge==='native') || options[0];
+      state.recipeId = preferred.recipe.id;
+      state.grindManual = false;
+      stopTimer(true);
+      renderAll();
+    });
+  });
+}
+
+function renderRecipeSelect(){
+  const sel = document.getElementById('recipeSelect');
+  const options = recipesForDripper(state.dripperId);
+  sel.innerHTML = options.map(o=>
+    `<option value="${o.recipe.id}" ${o.recipe.id===state.recipeId?'selected':''}>${o.recipe.name} — ${o.badgeText}</option>`
+  ).join('');
+}
+
+/* ============================ CORE COMPUTE ============================ */
+
+function computeBrew(){
+  const recipe = RECIPES[state.recipeId];
+  const dripper = dripperById(state.dripperId);
+  const dose = Math.max(1, state.dose);
+  const totalWater = dose * recipe.ratio;
+  const isIced = state.mode === 'iced';
+  const iceFraction = recipe.iceFraction ?? 0.4;
+  const ice = isIced ? Math.round(totalWater * iceFraction) : 0;
+  const baseWater = isIced ? (totalWater - ice) : totalWater;
+  const tempC = isIced ? recipe.tempIced : recipe.tempHot;
+
+  let cum = 0, prevSec = 0;
+  const steps = recipe.steps.map(s=>{
+    const target = Math.round(baseWater * s.pct);
+    const delta = target - cum;
+    cum = target;
+    const startSec = prevSec, endSec = prevSec + s.dur;
+    prevSec = endSec;
+    return { ...s, delta, target, startSec, endSec };
+  });
+  const totalTime = steps.length ? steps[steps.length-1].endSec : 0;
+
+  const grindIdx = state.grindManual ? state.grindIndex : (recipe.grindOverride ?? dripper.grind);
+
+  // fit badge relative to the CURRENTLY selected dripper
+  let fit = 'universal', fitText = 'Works with any dripper';
+  if (recipe.native === dripper.id){ fit = 'native'; fitText = `Recommended for ${dripper.name}`; }
+  else if ((recipe.compatible||[]).includes(dripper.id)){ fit = 'compatible'; fitText = `Also works well on ${dripper.name}`; }
+
+  return { recipe, dripper, dose, totalWater:Math.round(totalWater), isIced, ice, hotWater:Math.round(baseWater),
+            tempC, steps, totalTime, grindIdx, fit, fitText };
+}
+
+/* ============================ RENDER: output panel ============================ */
+
+let lastBrew = null;
+
+function renderOutput(){
+  const brew = computeBrew();
+  lastBrew = brew;
+  const { recipe, dripper, isIced } = brew;
+
+  // header
+  document.getElementById('recipeTitle').textContent = recipe.name;
+  document.getElementById('recipeSub').textContent = `${dripper.name} · 1:${recipe.ratio.toFixed(recipe.ratio%1===0?0:1)}`;
+  const badge = document.getElementById('fitBadge');
+  badge.textContent = brew.fitText;
+  badge.className = `fit-badge ${brew.fit}`;
+
+  // stat row
+  const statRow = document.getElementById('statRow');
+  const ic = isIced ? 'iced' : '';
+  if (isIced){
+    statRow.innerHTML = `
+      <div class="stat"><div class="slabel">Coffee</div><div class="sval">${brew.dose}<span class="sunit">g</span></div></div>
+      <div class="stat"><div class="slabel">Total water</div><div class="sval">${brew.totalWater}<span class="sunit">g</span></div></div>
+      <div class="stat"><div class="slabel">Hot water</div><div class="sval ${ic}">${brew.hotWater}<span class="sunit">g</span></div></div>
+      <div class="stat"><div class="slabel">Ice in server</div><div class="sval ${ic}">${brew.ice}<span class="sunit">g</span></div></div>
+    `;
+  } else {
+    statRow.innerHTML = `
+      <div class="stat"><div class="slabel">Coffee</div><div class="sval">${brew.dose}<span class="sunit">g</span></div></div>
+      <div class="stat"><div class="slabel">Total water</div><div class="sval">${brew.totalWater}<span class="sunit">g</span></div></div>
+      <div class="stat"><div class="slabel">Ratio</div><div class="sval">1:${recipe.ratio.toFixed(recipe.ratio%1===0?0:1)}</div></div>
+      <div class="stat"><div class="slabel">Brew time</div><div class="sval">${fmtTime(brew.totalTime)}</div></div>
+    `;
+  }
+
+  // notes
+  const tempDisplay = state.tempUnit === 'C' ? `${brew.tempC}°C` : `${cToF(brew.tempC)}°F`;
+  const hackSec = hackSecondsFor(brew.tempC);
+  const hackText = hackSec < 5
+    ? `Use it right off the boil.`
+    : `No thermometer? Off the boil, wait about <b>${fmtTime(hackSec)}</b> to land near ${tempDisplay}.`;
+  const grindStep = GRIND_STEPS[brew.grindIdx];
+
+  const notes = [];
+  if (isIced){
+    notes.push(`<b>${brew.ice}g of ice</b> goes in the server before you start brewing — the melt dilutes the coffee to the target ratio.`);
+  }
+  notes.push(`Water at <b>${tempDisplay}</b> (range ±2–3°C). ${hackText}`);
+  notes.push(`Grind size: <b>${grindStep.label}</b> — about like your ${grindStep.ref} setting. Adjust finer for slower drawdown, coarser for faster.`);
+  notes.push(`Pre-rinse the paper filter with hot water to remove papery taste and pre-warm the dripper.`);
+
+  document.getElementById('notesBox').innerHTML = notes.map(n=>`
+    <div class="note-line">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>${n}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('recipeNote').textContent = recipe.rationale;
+  document.getElementById('recipeAttrib').textContent = `By ${recipe.attribution}`;
+
+  // grind readout in left panel
+  document.getElementById('grindLabel').textContent = grindStep.label;
+  document.getElementById('grindRef').textContent = `like ${grindStep.ref}`;
+  document.getElementById('grindContextLabel').textContent = `· ${dripper.name}`;
+  document.getElementById('grindSlider').value = brew.grindIdx;
+
+  // schedule
+  const list = document.getElementById('scheduleList');
+  document.getElementById('stepCount').textContent = `${brew.steps.length} steps`;
+  list.innerHTML = brew.steps.map((s,i)=>{
+    const amountHtml = s.delta > 0
+      ? `<div class="step-amount ${ic}">+${s.delta}g water <span class="total">· to ${s.target}g total</span></div>`
+      : ``;
+    return `
+      <div class="step-row ${ic}" data-idx="${i}">
+        <div class="step-dot-col"><div class="step-dot"></div></div>
+        <div class="step-body">
+          <div class="step-top">
+            <span class="step-title">Step ${i+1} — ${s.label}</span>
+            <span class="step-time">${fmtTime(s.startSec)}–${fmtTime(s.endSec)}</span>
+          </div>
+          ${amountHtml}
+          <div class="step-purpose">${s.purpose}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('targetTimeLabel').textContent = fmtTime(brew.totalTime);
+
+  updateTimerVisual();
+  updateActiveStep();
+  renderJournal();
+}
+
+function renderAll(){
+  renderDripperGrid();
+  renderRecipeSelect();
+  renderOutput();
+}
+
+/* ============================ TIMER ============================ */
+
+const RING_CIRC = 2 * Math.PI * 44;
+
+function updateTimerVisual(){
+  const brew = lastBrew;
+  if (!brew) return;
+  const elapsed = state.timer.elapsed;
+  const frac = brew.totalTime > 0 ? Math.min(1, elapsed / brew.totalTime) : 0;
+  const ring = document.getElementById('ringFg');
+  ring.style.strokeDasharray = `${RING_CIRC}`;
+  ring.style.strokeDashoffset = `${RING_CIRC * (1 - frac)}`;
+  ring.classList.toggle('iced', brew.isIced);
+  document.getElementById('timerDigits').textContent = fmtTime(elapsed);
+
+  const startBtn = document.getElementById('startBtn');
+  startBtn.classList.toggle('iced', brew.isIced);
+}
+
+function updateActiveStep(){
+  const brew = lastBrew;
+  if (!brew) return;
+  const elapsed = state.timer.elapsed;
+  const rows = document.querySelectorAll('.step-row');
+  let activeIdx = -1;
+  brew.steps.forEach((s,i)=>{
+    if (elapsed >= s.startSec && elapsed < s.endSec) activeIdx = i;
+  });
+  const finished = brew.totalTime > 0 && elapsed >= brew.totalTime;
+  rows.forEach((row,i)=>{
+    row.classList.toggle('active', i===activeIdx && state.timer.running);
+    row.classList.toggle('done', finished || i < activeIdx);
+  });
+
+  const statusEl = document.getElementById('nowStatus');
+  if (!state.timer.running && elapsed === 0){
+    statusEl.innerHTML = `Press start when your water's ready.`;
+  } else if (finished){
+    statusEl.innerHTML = `<b>Brew complete</b> — let it finish draining, then serve.`;
+  } else if (activeIdx >= 0){
+    const s = brew.steps[activeIdx];
+    const amt = s.delta > 0 ? `pour to ${s.target}g` : s.purpose;
+    statusEl.innerHTML = `<b>Now</b><span class="dash">·</span>Step ${activeIdx+1} — ${s.label}<span class="dash">·</span>${amt}`;
+  } else {
+    statusEl.innerHTML = `Ready. Tap start to begin timing your pours.`;
+  }
+}
+
+function startTimer(){
+  if (state.timer.running) return;
+  state.timer.running = true;
+  document.getElementById('startBtn').innerHTML = `
+    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause`;
+  state.timer.intervalId = setInterval(()=>{
+    state.timer.elapsed += 1;
+    updateTimerVisual();
+    updateActiveStep();
+    if (lastBrew && state.timer.elapsed >= lastBrew.totalTime + 2){
+      pauseTimer();
+    }
+  }, 1000);
+  updateActiveStep();
+}
+function pauseTimer(){
+  state.timer.running = false;
+  clearInterval(state.timer.intervalId);
+  document.getElementById('startBtn').innerHTML = `
+    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume`;
+  updateActiveStep();
+}
+function stopTimer(silent){
+  state.timer.running = false;
+  clearInterval(state.timer.intervalId);
+  state.timer.elapsed = 0;
+  document.getElementById('startBtn').innerHTML = `
+    <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start brew`;
+  if (!silent){
+    updateTimerVisual();
+    updateActiveStep();
+  }
+}
+
+/* ============================ JOURNAL (localStorage) ============================ */
+
+const JOURNAL_KEY = 'slowpour_brews';
+
+function loadJournal(){
+  try { return JSON.parse(localStorage.getItem(JOURNAL_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveJournalEntry(){
+  const brew = lastBrew;
+  if (!brew) return;
+  const entries = loadJournal();
+  entries.unshift({
+    id: Date.now(),
+    dripperId: state.dripperId,
+    dripperName: brew.dripper.name,
+    recipeId: state.recipeId,
+    recipeName: brew.recipe.name,
+    dose: brew.dose,
+    mode: state.mode,
+    ratio: brew.recipe.ratio,
+    ts: new Date().toISOString(),
+  });
+  localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries.slice(0,20)));
+  renderJournal();
+}
+function deleteJournalEntry(id){
+  const entries = loadJournal().filter(e=>e.id !== id);
+  localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries));
+  renderJournal();
+}
+function loadEntryIntoState(entry){
+  state.dripperId = entry.dripperId;
+  state.recipeId = entry.recipeId;
+  state.dose = entry.dose;
+  state.mode = entry.mode;
+  state.grindManual = false;
+  document.getElementById('doseInput').value = entry.dose;
+  document.querySelectorAll('#serveToggle button').forEach(b=>b.classList.toggle('active', b.dataset.mode===entry.mode));
+  stopTimer(true);
+  renderAll();
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+function renderJournal(){
+  const box = document.getElementById('journalBox');
+  const entries = loadJournal();
+  if (entries.length === 0){
+    box.innerHTML = `
+      <div class="journal-empty">
+        <p class="big">No brews yet</p>
+        <p>Save a brew and it'll show up here — recipes are stored locally on this device.</p>
+      </div>`;
+    return;
+  }
+  box.innerHTML = `<div class="journal-list">` + entries.map(e=>`
+    <div class="journal-item">
+      <div class="jinfo">
+        <b>${e.dripperName}</b> · ${e.recipeName}
+        <div class="jmeta">${e.dose}g · ${e.mode==='iced'?'Iced':'Hot'} · ${fmtDate(e.ts)}</div>
+      </div>
+      <div class="journal-item-actions">
+        <button class="jbtn" data-load="${e.id}">Use</button>
+        <button class="jbtn del" data-del="${e.id}">✕</button>
+      </div>
+    </div>
+  `).join('') + `</div>`;
+
+  box.querySelectorAll('[data-load]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const entry = entries.find(e=>e.id === Number(btn.dataset.load));
+      if (entry) loadEntryIntoState(entry);
+    });
+  });
+  box.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click', ()=> deleteJournalEntry(Number(btn.dataset.del)));
+  });
+}
+
+/* ============================ EVENTS ============================ */
+
+document.getElementById('serveToggle').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-mode]');
+  if (!btn) return;
+  state.mode = btn.dataset.mode;
+  document.querySelectorAll('#serveToggle button').forEach(b=>b.classList.toggle('active', b===btn));
+  stopTimer(true);
+  renderOutput();
+});
+
+document.getElementById('doseInput').addEventListener('input', (e)=>{
+  const v = parseFloat(e.target.value);
+  state.dose = isNaN(v) ? 0 : v;
+  document.querySelectorAll('.chip[data-dose]').forEach(c=>c.classList.toggle('active', Number(c.dataset.dose)===v));
+  renderOutput();
+});
+
+document.getElementById('doseChips').addEventListener('click', (e)=>{
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  const v = Number(chip.dataset.dose);
+  state.dose = v;
+  document.getElementById('doseInput').value = v;
+  document.querySelectorAll('.chip[data-dose]').forEach(c=>c.classList.toggle('active', c===chip));
+  renderOutput();
+});
+
+document.getElementById('grindSlider').addEventListener('input', (e)=>{
+  state.grindManual = true;
+  state.grindIndex = Number(e.target.value);
+  renderOutput();
+});
+
+document.getElementById('recipeSelect').addEventListener('change', (e)=>{
+  state.recipeId = e.target.value;
+  state.grindManual = false;
+  stopTimer(true);
+  renderOutput();
+});
+
+document.getElementById('saveBtn').addEventListener('click', saveJournalEntry);
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  if (state.timer.running) pauseTimer();
+  else startTimer();
+});
+document.getElementById('resetBtn').addEventListener('click', ()=> stopTimer(false));
+
+/* ============================ INIT ============================ */
+
+renderAll();
+</script>
+</body>
+</html>
