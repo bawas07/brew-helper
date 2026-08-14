@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "brew-helper",
+  "name": "slow-pour",
   "compatibility_date": "2026-05-29",
   "observability": {
     "enabled": true
