@@ -16,8 +16,8 @@ export default defineConfig({
 				description: 'A calm, precise pour-over companion',
 				start_url: '/',
 				scope: '/',
-				theme_color: '#F6F2E9',
-				background_color: '#F6F2E9',
+				theme_color: '#F1F5F8',
+				background_color: '#F1F5F8',
 				display: 'standalone',
 				orientation: 'portrait-primary',
 				icons: [

@@ -3,19 +3,19 @@
 /* Slow Pour Design System - Tailwind v4 Theme Customization */
 @theme {
   /* Colors */
-  --color-cream: #F6F2E9;
-  --color-card: #FCFAF5;
-  --color-ink: #2B2621;
-  --color-ink-soft: #736A5E;
-  --color-ink-faint: #A69C8C;
-  --color-line: #E6DECE;
-  --color-rust: #B24A21;
-  --color-rust-ink: #7C3216;
-  --color-rust-soft: #F2DDC8;
-  --color-teal: #2E6577;
-  --color-teal-soft: #DCEAEC;
-  --color-gold: #8A6D2F;
-  --color-gold-soft: #EFE6CD;
+  --color-cream: #F1F5F8;
+  --color-card: #FAFCFD;
+  --color-ink: #20303D;
+  --color-ink-soft: #607282;
+  --color-ink-faint: #91A2AF;
+  --color-line: #D7E1E8;
+  --color-rust: #2F6FAD;
+  --color-rust-ink: #245684;
+  --color-rust-soft: #DCEAF6;
+  --color-teal: #28758A;
+  --color-teal-soft: #D9EEF2;
+  --color-gold: #927A3B;
+  --color-gold-soft: #EEE9D7;
 
   /* Fonts */
   --font-serif: 'Fraunces', Georgia, serif;
@@ -28,7 +28,7 @@
   --radius-sm: 8px;
 
   /* Shadows */
-  --shadow-card: 0 1px 2px rgba(43,38,33,.04), 0 8px 24px -12px rgba(43,38,33,.12);
+  --shadow-card: 0 1px 2px rgba(32,48,61,.04), 0 8px 24px -12px rgba(32,48,61,.12);
 }
 
 /* Base styles */
