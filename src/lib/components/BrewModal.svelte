@@ -4,7 +4,8 @@
    * Opens when the user clicks Start, keeps timer running in background.
    */
   import { currentBrew } from '$lib/stores/brew';
-  import { fmtTime } from '$lib/calculations';
+  import { formatPourAmount, fmtTime } from '$lib/calculations';
+  import { playTing } from '$lib/audio';
   import {
     timerElapsed,
     timerRunning,
@@ -20,6 +21,7 @@
   let elapsed = $derived($timerElapsed);
   let running = $derived($timerRunning);
   let open = $derived($brewModalOpen);
+  let brew = $derived($currentBrew);
   let steps = $derived($currentBrew.steps);
   let totalTime = $derived($currentBrew.totalTime);
   let progress = $derived(totalTime > 0 ? Math.min(elapsed / totalTime, 1) : 0);
@@ -34,6 +36,15 @@
     }
     // Past all steps
     return steps.length - 1;
+  });
+
+  let previousStepIndex = -1;
+  $effect(() => {
+    const nextStepIndex = currentStepIndex;
+    if (running && previousStepIndex >= 0 && nextStepIndex > previousStepIndex) {
+      playTing();
+    }
+    previousStepIndex = nextStepIndex;
   });
 
   // Sliding window: previous (if available) + current + 2 upcoming
@@ -70,6 +81,7 @@
     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm"
     onclick={handleBackdropClick}
     role="dialog"
+    tabindex="-1"
     aria-modal="true"
     aria-label="Brew timer"
   >
@@ -77,7 +89,12 @@
     <div class="bg-card w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-2xl max-h-[100dvh] sm:max-h-[90dvh] overflow-y-auto flex flex-col">
       <!-- Header -->
       <div class="flex items-center justify-between px-5 pt-4 pb-2 shrink-0">
-        <p class="text-[11px] tracking-widest uppercase text-ink-faint">Brewing</p>
+        <div>
+          <p class="text-[11px] tracking-widest uppercase text-ink-faint">Brewing</p>
+          <p class="text-xs text-ink-faint mt-0.5">
+            {brew.totalWater}g total water{#if brew.isIced} · {brew.hotWater}g hot{/if}
+          </p>
+        </div>
         <button
           class="w-8 h-8 flex items-center justify-center rounded-full text-ink-faint hover:text-ink hover:bg-line/50 transition-colors"
           onclick={close}
@@ -205,7 +222,7 @@
                     class:text-ink-soft={isCurrent || isCompleted}
                     class:text-ink-faint={!isCurrent && !isCompleted}
                   >
-                    {step.delta}g{#if isCurrent} · {step.purpose}{/if}
+                    {formatPourAmount(step.delta, step.target)}{#if isCurrent} · {step.purpose}{/if}
                   </p>
                 </div>
               </div>

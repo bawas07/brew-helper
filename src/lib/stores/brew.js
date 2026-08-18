@@ -8,8 +8,6 @@ export const mode = writable('hot'); // 'hot' | 'iced'
 export const dose = writable(DEFAULT_DOSE); // number (grams)
 export const dripperId = writable('v60'); // string
 export const recipeId = writable('universal'); // string
-export const grindIndex = writable(3); // number 0-6
-export const grindManual = writable(false); // boolean
 export const tempUnit = writable('C'); // 'C' | 'F'
 
 // Derived stores
@@ -20,15 +18,13 @@ export const currentDripper = derived(dripperId, ($dripperId) => dripperById($dr
 export const availableRecipes = derived(dripperId, ($dripperId) => recipesForDripper($dripperId));
 
 export const currentBrew = derived(
-  [mode, dose, dripperId, recipeId, grindIndex, grindManual],
-  ([$mode, $dose, $dripperId, $recipeId, $grindIndex, $grindManual]) => {
+  [mode, dose, dripperId, recipeId],
+  ([$mode, $dose, $dripperId, $recipeId]) => {
     return computeBrew({
       mode: $mode,
       dose: $dose,
       dripperId: $dripperId,
       recipeId: $recipeId,
-      grindIndex: $grindIndex,
-      grindManual: $grindManual,
     });
   }
 );
@@ -36,14 +32,12 @@ export const currentBrew = derived(
 // Action functions
 export function setDripper(id) {
   dripperId.set(id);
-  grindManual.set(false);
   // Always reset to Universal 1:16 on dripper change
   recipeId.set('universal');
 }
 
 export function setRecipe(id) {
   recipeId.set(id);
-  grindManual.set(false);
 }
 
 /**
@@ -60,15 +54,6 @@ export function setDose(value) {
  */
 export function toggleMode(newMode) {
   mode.set(newMode);
-}
-
-/**
- * Set the grind size index (0-6)
- * @param {number} index
- */
-export function setGrind(index) {
-  grindIndex.set(index);
-  grindManual.set(true);
 }
 
 export function toggleTempUnit() {

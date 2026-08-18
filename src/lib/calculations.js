@@ -38,6 +38,16 @@ export function fmtTime(seconds) {
 }
 
 /**
+ * Format a pour amount as an incremental pour and cumulative target.
+ * @param {number} delta
+ * @param {number} target
+ */
+export function formatPourAmount(delta, target) {
+  if (delta <= 0) return `${target}g total`;
+  return `${delta}g → ${target}g total`;
+}
+
+/**
  * Convert Celsius to Fahrenheit (rounded)
  */
 export function cToF(celsius) {
@@ -100,10 +110,10 @@ export function computeBrew(state) {
 
   const totalTime = steps.length > 0 ? steps[steps.length - 1].endSec : 0;
 
-  // Determine grind index: manual override takes priority, then recipe override, then dripper default
-  const grindIdx = state.grindManual
-    ? state.grindIndex
-    : (recipe.grindOverride ?? dripper.grind);
+  // Recipe overrides are absolute scale positions; otherwise use the dripper default.
+  const hasRecipeGrindOverride = recipe.grindOverride !== null && recipe.grindOverride !== undefined;
+  const grindIdx = hasRecipeGrindOverride ? recipe.grindOverride : dripper.grind;
+  const grindAdjustment = hasRecipeGrindOverride ? grindIdx - dripper.grind : 0;
 
   // Determine fit badge relative to the currently selected dripper
   let fit = 'universal';
@@ -128,6 +138,7 @@ export function computeBrew(state) {
     steps,
     totalTime,
     grindIdx,
+    grindAdjustment,
     fit,
     fitText,
   };
