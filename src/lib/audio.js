@@ -37,15 +37,17 @@ export function initAudio() {
 /**
  * Play a short, synthesized bell-like cue.
  * This intentionally has no external asset dependency.
+ *
+ * @param {number} [delaySeconds=0] Delay scheduling the cue to avoid overlap.
  */
-export function playTing() {
+export function playTing(delaySeconds = 0) {
   const context = initAudio();
   if (!context) return;
 
   try {
     const oscillator = context.createOscillator();
     const gain = context.createGain();
-    const startTime = context.currentTime;
+    const startTime = context.currentTime + Math.max(0, delaySeconds);
     const endTime = startTime + 0.18;
 
     oscillator.type = 'sine';
