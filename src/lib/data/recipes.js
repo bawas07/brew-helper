@@ -84,6 +84,27 @@ export const RECIPES = {
     ],
   },
 
+  kasuya46: {
+    id: 'kasuya46',
+    name: "Kasuya's 4:6 Method",
+    native: 'v60',
+    compatible: ['origami', 'flower'],
+    ratio: 15,
+    iceFraction: 0.4,
+    attribution: 'Tetsu Kasuya — 2016 World Brewers Cup Champion',
+    rationale: 'The first 40% of water shapes taste; the remaining 60% controls strength through three even pours.',
+    tempHot: 90,
+    tempIced: 90,
+    grindOverride: 3,
+    steps: [
+      { label: 'Pour 1 — taste phase', dur: 45, pct: 0.20, purpose: 'Pour to 20%. This first pour begins the 40% taste phase.' },
+      { label: 'Pour 2 — taste phase', dur: 45, pct: 0.40, purpose: 'Pour to 40%. Complete the taste phase; these first two pours shape sweetness and acidity.' },
+      { label: 'Pour 3 — strength phase', dur: 45, pct: 0.60, purpose: 'Pour to 60%. Begin the 60% strength phase with an even pulse.' },
+      { label: 'Pour 4 — strength phase', dur: 45, pct: 0.80, purpose: 'Pour to 80%. Continue the strength phase with a steady, gentle pour.' },
+      { label: 'Pour 5 — strength phase', dur: 30, pct: 1.00, purpose: 'Pour to 100%. Finish the strength phase, then let the bed draw down.' },
+    ],
+  },
+
   kasuyaSwitch: {
     id: 'kasuyaSwitch',
     name: "Kasuya's Hybrid Switch",

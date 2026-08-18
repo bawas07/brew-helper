@@ -25,7 +25,7 @@
   );
   let tempDisplay = $derived($tempUnit === 'C' ? `${brew.tempC}°C` : `${cToF(brew.tempC)}°F`);
 
-  /** @type {Record<string, string>} */
+  /** @type {string} */
   let fitBadgeColors = $derived({
     native: 'bg-gold-soft text-gold',
     compatible: 'bg-teal-soft text-teal',
@@ -33,6 +33,16 @@
   }[brew.fit] || 'bg-line/50 text-ink-soft');
 
   let grindStep = $derived(GRIND_STEPS[brew.grindIdx] || GRIND_STEPS[3]);
+  let grindGuidance = $derived.by(() => {
+    const adjustment = brew.grindAdjustment;
+    const dripperName = brew.dripper?.name || 'selected dripper';
+    if (adjustment === 0) return `Use the ${dripperName} default grind.`;
+
+    const direction = adjustment < 0 ? 'finer' : 'coarser';
+    const stepCount = Math.abs(adjustment);
+    const stepLabel = stepCount === 1 ? 'step' : 'steps';
+    return `${stepCount} ${stepLabel} ${direction} than the ${dripperName} default.`;
+  });
   let hackSec = $derived(hackSecondsFor(brew.tempC));
   let hackText = $derived(
     hackSec < 5
@@ -121,7 +131,7 @@
         <svg class="w-3.5 h-3.5 shrink-0 mt-0.5 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
-        <span>Grind: <b class="text-ink font-semibold">{grindStep.label}</b> — like {grindStep.ref}.</span>
+        <span>Grind: <b class="text-ink font-semibold">{grindGuidance}</b> Effective: {grindStep.label}, like {grindStep.ref}.</span>
       </div>
       <div class="flex gap-2 text-[13px] text-ink-soft leading-relaxed">
         <svg class="w-3.5 h-3.5 shrink-0 mt-0.5 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

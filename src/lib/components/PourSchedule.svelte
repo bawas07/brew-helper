@@ -3,7 +3,7 @@
    * Vertical timeline of pour steps with active step highlighting
    */
   import { currentBrew } from '$lib/stores/brew';
-  import { fmtTime } from '$lib/calculations';
+  import { formatPourAmount, fmtTime } from '$lib/calculations';
   import { timerElapsed } from '$lib/stores/timer';
 
   let steps = $derived($currentBrew.steps);
@@ -82,7 +82,7 @@
             class:text-ink-soft={active || completed}
             class:text-ink-faint={!active && !completed}
           >
-            {step.delta}g · {step.purpose}
+            {formatPourAmount(step.delta, step.target)} · {step.purpose}
           </p>
         </div>
       </div>

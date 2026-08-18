@@ -4,7 +4,6 @@
 	import ServeToggle from '$lib/components/ServeToggle.svelte';
 	import DoseInput from '$lib/components/DoseInput.svelte';
 	import DripperGrid from '$lib/components/DripperGrid.svelte';
-	import GrindSelector from '$lib/components/GrindSelector.svelte';
 	import RecipeSelect from '$lib/components/RecipeSelect.svelte';
 	import RecipePanel from '$lib/components/RecipePanel.svelte';
 	import Timer from '$lib/components/Timer.svelte';
@@ -15,7 +14,7 @@
 
 <svelte:head>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
 		href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
 		rel="stylesheet"
@@ -33,7 +32,6 @@
 				<ServeToggle />
 				<DoseInput />
 				<DripperGrid />
-				<GrindSelector />
 				<RecipeSelect />
 			</div>
 
