@@ -17,6 +17,7 @@
 
   const RADIUS = 44;
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  const STEP_CUE_DELAY_SECONDS = 0.2;
 
   let elapsed = $derived($timerElapsed);
   let running = $derived($timerRunning);
@@ -41,8 +42,12 @@
   let previousStepIndex = -1;
   $effect(() => {
     const nextStepIndex = currentStepIndex;
-    if (running && previousStepIndex >= 0 && nextStepIndex > previousStepIndex) {
-      playTing();
+    const crossedStepCount = nextStepIndex - previousStepIndex;
+
+    if (running && previousStepIndex >= 0 && crossedStepCount > 0) {
+      for (let cueIndex = 0; cueIndex < crossedStepCount; cueIndex += 1) {
+        playTing(cueIndex * STEP_CUE_DELAY_SECONDS);
+      }
     }
     previousStepIndex = nextStepIndex;
   });
